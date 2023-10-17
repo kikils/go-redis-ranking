@@ -1,0 +1,28 @@
+version: "3"
+services:
+  docker-redis:
+    image: redis:6.0
+    container_name: redis
+    volumes:
+      - ./redis/redis.conf:/usr/local/etc/redis/redis.conf
+      # ローカルの./redis/redis.cnf(Redisの設定ファイル)をコンテナ上の/usr/local/etc/redis/redis.confにマウントする
+    ports:
+      - "6379:6379"
+      # ローカルの6379ポートとコンテナの6379ポートをマッピングする
+    entrypoint: redis-server /usr/local/etc/redis/redis.conf
+  docker-mysql:
+    image: mysql:5.7
+    container_name: mysql
+    volumes:
+      - ./mysql/my.cnf:/etc/mysql/conf.d/my.cnf
+      # ローカルの./mysql/my.cnf(MySQLの設定ファイル)をコンテナ上の/etc/mysql/conf.d/my.cnfにマウントする
+      - ./mysql/init:/docker-entrypoint-initdb.d
+      # ローカルの./mysql/init(MySQLの初期データファイル)をコンテナ上の/docker-entrypoint-initdb.dにマウントする
+    ports:
+      - "3306:3306"
+      # ローカルの3306ポートとコンテナの3306ポートをマッピングする
+    environment:
+      MYSQL_ROOT_PASSWORD: password # root password
+      MYSQL_USER: user # username
+      MYSQL_PASSWORD: password # password
+      MYSQL_DATABASE: database # database
